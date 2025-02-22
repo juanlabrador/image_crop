@@ -33,7 +33,6 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -41,7 +40,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
+public final class ImageCropPlugin implements FlutterPlugin, ActivityAware, MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
     private static final int PERMISSION_REQUEST_CODE = 13094;
 
     private MethodChannel channel;
@@ -55,22 +54,22 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
         this.activity = activity;
     }
 
-    public ImageCropPlugin(){ }
+    public ImageCropPlugin() {
+    }
 
     /**
      * legacy APIs
      */
-    public static void registerWith(Registrar registrar) {
-        ImageCropPlugin instance = new ImageCropPlugin(registrar.activity());
-        instance.setup(registrar.messenger());
-        registrar.addRequestPermissionsResultListener(instance);
-    }
-
+//    public static void registerWith(Registrar registrar) {
+//        ImageCropPlugin instance = new ImageCropPlugin(registrar.activity());
+//        instance.setup(registrar.messenger());
+//        registrar.addRequestPermissionsResultListener(instance);
+//    }
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-      this.setup(binding.getBinaryMessenger());
+        this.setup(binding.getBinaryMessenger());
     }
-  
+
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
@@ -83,11 +82,11 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
         activity = activityPluginBinding.getActivity();
         activityPluginBinding.addRequestPermissionsResultListener(this);
     }
-   
+
     @Override
     public void onDetachedFromActivity() {
         activity = null;
-        if(binding != null){
+        if (binding != null) {
             binding.removeRequestPermissionsResultListener(this);
         }
     }
@@ -96,12 +95,12 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
     public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
         this.onAttachedToActivity(activityPluginBinding);
     }
-  
+
     @Override
     public void onDetachedFromActivityForConfigChanges() {
         this.onDetachedFromActivity();
     }
-  
+
     private void setup(BinaryMessenger messenger) {
         channel = new MethodChannel(messenger, "plugins.lykhonis.com/image_crop");
         channel.setMethodCallHandler(this);
@@ -178,9 +177,9 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
                     transformations.postRotate(options.getDegrees());
                     Bitmap oldBitmap = srcBitmap;
                     srcBitmap = Bitmap.createBitmap(oldBitmap,
-                                                    0, 0,
-                                                    oldBitmap.getWidth(), oldBitmap.getHeight(),
-                                                    transformations, true);
+                            0, 0,
+                            oldBitmap.getWidth(), oldBitmap.getHeight(),
+                            transformations, true);
                     oldBitmap.recycle();
                 }
 
@@ -196,22 +195,11 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
                 paint.setDither(true);
 
                 Rect srcRect = new Rect((int) (srcBitmap.getWidth() * area.left),
-                                        (int) (srcBitmap.getHeight() * area.top),
-                                        (int) (srcBitmap.getWidth() * area.right),
-                                        (int) (srcBitmap.getHeight() * area.bottom));
+                        (int) (srcBitmap.getHeight() * area.top),
+                        (int) (srcBitmap.getWidth() * area.right),
+                        (int) (srcBitmap.getHeight() * area.bottom));
                 Rect dstRect = new Rect(0, 0, width, height);
                 canvas.drawBitmap(srcBitmap, srcRect, dstRect, paint);
-
-                // TODO: Research a way to optimize rendering via matrix to reduce memory print.
-//                Matrix transformations = new Matrix();
-//                transformations.mapRect(new RectF(0, 0,
-//                                                  options.getWidth(), options.getHeight()));
-//                transformations.postTranslate(-options.getWidth() / 2f * area.left,
-//                                              -options.getHeight() / 2f * area.top);
-//                transformations.postRotate(options.getDegrees(),
-//                                           options.getWidth() / 2f * area.width(),
-//                                           options.getHeight() / 2f * area.height());
-//                canvas.drawBitmap(srcBitmap, transformations, paint);
 
                 try {
                     final File dstFile = createTemporaryImageFile();
@@ -256,7 +244,7 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
                 ImageOptions options = decodeImageOptions(path);
                 BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
                 bitmapOptions.inSampleSize = calculateInSampleSize(options.getWidth(), options.getHeight(),
-                                                                   maximumWidth, maximumHeight);
+                        maximumWidth, maximumHeight);
 
                 Bitmap bitmap = BitmapFactory.decodeFile(path, bitmapOptions);
                 if (bitmap == null) {
@@ -376,7 +364,7 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
             int readExternalStorage = getPermissionGrantResult(READ_EXTERNAL_STORAGE, permissions, grantResults);
             int writeExternalStorage = getPermissionGrantResult(WRITE_EXTERNAL_STORAGE, permissions, grantResults);
             permissionRequestResult.success(readExternalStorage == PackageManager.PERMISSION_GRANTED &&
-                                                    writeExternalStorage == PackageManager.PERMISSION_GRANTED);
+                    writeExternalStorage == PackageManager.PERMISSION_GRANTED);
             permissionRequestResult = null;
         }
         return false;
@@ -393,7 +381,7 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
 
     private File createTemporaryImageFile() throws IOException {
         File directory = activity.getCacheDir();
-        String name = "image_crop_" + UUID.randomUUID().toString();
+        String name = "image_crop_plus_" + UUID.randomUUID().toString();
         return File.createTempFile(name, ".jpg", directory);
     }
 
@@ -452,9 +440,9 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
     }
 
     private static final class ImageOptions {
-        private final int width;
-        private final int height;
-        private final int degrees;
+        private int width;
+        private int height;
+        private int degrees;
 
         ImageOptions(int width, int height, int degrees) {
             this.width = width;
@@ -463,11 +451,11 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
         }
 
         int getHeight() {
-            return (isFlippedDimensions() && degrees != 180) ? width : height;
+            return isFlippedDimensions() ? width : height;
         }
 
         int getWidth() {
-            return (isFlippedDimensions() && degrees != 180)  ? height : width;
+            return isFlippedDimensions() ? height : width;
         }
 
         int getDegrees() {
@@ -475,7 +463,7 @@ public final class ImageCropPlugin implements FlutterPlugin , ActivityAware, Met
         }
 
         boolean isFlippedDimensions() {
-            return degrees == 90 || degrees == 270 || degrees == 180;
+            return degrees == 90 || degrees == 270;
         }
 
         public boolean isRotated() {
