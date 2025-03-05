@@ -55,28 +55,31 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _buildCroppingImage() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: Crop.file(_sample!, key: cropKey),
-        ),
-        Container(
-          padding: const EdgeInsets.only(top: 20.0),
-          alignment: AlignmentDirectional.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              TextButton(
-                child: Text(
-                  'Crop Image',
-                ),
-                onPressed: () => _cropImage(),
-              ),
-              _buildOpenImage(),
-            ],
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: Crop.file(_sample!, key: cropKey),
           ),
-        )
-      ],
+          Container(
+            padding: const EdgeInsets.only(top: 20.0),
+            alignment: AlignmentDirectional.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                TextButton(
+                  child: Text(
+                    'Crop Image',
+                  ),
+                  onPressed: () => _cropImage(),
+                ),
+                _buildOpenImage(),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
